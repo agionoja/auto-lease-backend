@@ -145,65 +145,6 @@ userSchema.pre(/^find/, function (next) {
   next();
 });
 
-userSchema.methods.passwordChangedAfterJwt = function (jwtIsa) {
-  if (this.passwordChangedAt) {
-    return this.passwordChangedAt.getTime() / 1000 > jwtIsa;
-  }
-  return false;
-};
-
-userSchema.methods.comparePassword = async (plainPassword, hashedPassword) =>
-  await bcrypt.compare(plainPassword, hashedPassword);
-
-userSchema.methods.confirmUser = async function () {
-  this.isUserConfirmed = true;
-  this.userConfirmationToken = undefined;
-  this.userConfirmationTokenExpires = undefined;
-  await this.save({ validateBeforeSave: false });
-};
-
-userSchema.methods.generateAndSaveOtp = async function () {
-  const otp = generateOtp(6);
-  this.otp = createHash(otp);
-  this.otpExpires = createTimeStampInEpoch({ m: 2 });
-  await this.save({ validateBeforeSave: false });
-  return otp;
-};
-
-userSchema.methods.destroyOtp = async function () {
-  this.otp = undefined;
-  this.otpExpires = undefined;
-  await this.save({ validateBeforeSave: false });
-};
-
-userSchema.methods.generateAndSavePasswordResetToken = async function () {
-  const token = await createRandomBytes(32);
-  this.passwordResetToken = createHash(token);
-  this.passwordResetTokenExpires = createTimeStampInEpoch({ m: 10 });
-  await this.save({ validateBeforeSave: false });
-  return token;
-};
-
-userSchema.methods.destroyPasswordResetToken = async function () {
-  this.passwordResetToken = undefined;
-  this.passwordResetTokenExpires = undefined;
-  await this.save({ validateBeforeSave: false });
-};
-
-userSchema.methods.generateAndSaveUserConfirmationToken = async function () {
-  const token = await createRandomBytes(32);
-  this.userConfirmationToken = createHash(token);
-  this.userConfirmationTokenExpires = createTimeStampInEpoch({ m: 10 });
-  await this.save({ validateBeforeSave: false });
-  return token;
-};
-
-userSchema.methods.destroyConfirmationToken = async function () {
-  this.userConfirmationToken = undefined;
-  this.userConfirmationToken = undefined;
-  this.save({ validateBeforeSave: false });
-};
-
 userSchema.methods.dealershipApplicationResponse = async function (status) {
   if (this.dealershipApplicationStatus === APPROVED) {
     throw new AppError("Cannot modify an already application", 403);

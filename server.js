@@ -12,7 +12,7 @@ import connectDb from "./src/utils/db.js";
 
 const startServer = async () => {
   const port = process.env.PORT || 5000;
-  await connectDb({ localDb: false, maxRetries: 4 });
+  await connectDb({ localDb: true, maxRetries: 4 });
   const server = app.listen(port, () => {
     console.log(
       chalk.greenBright(

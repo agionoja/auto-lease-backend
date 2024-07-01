@@ -21,7 +21,7 @@ import reviewRouter from "./routes/reviewRouter.js";
 const app = express();
 
 //CRON JOBS
-(async () => await keepAwake())();
+keepAwake();
 
 const limiter = rateLimit({
   max: 100,

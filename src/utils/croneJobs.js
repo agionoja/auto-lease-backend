@@ -19,9 +19,10 @@ export const keepAwake = () =>
       );
 
       if (!response.ok) {
+        const errRes = await response.json();
         return console.error(
           chalk.red(
-            `HTTP error! status: ${(await response.json()).statusText}`,
+            `HTTP error! status: ${errRes.status}, ${errRes.statusText}`,
           ),
         );
       }

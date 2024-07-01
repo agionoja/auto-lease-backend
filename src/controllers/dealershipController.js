@@ -9,13 +9,26 @@ const { ADMIN, DEALER } = ROLES;
 
 export const createDealership = catchAsync(async (req, res, next) => {
   const { user } = req;
-  const id =
-    user?.role === ADMIN
-      ? req.params?.id
-      : user?._id || "667b6a878941451af60400da"; //temporal;
+  const id = user?.role === ADMIN ? req.params?.id : user?._id;
 
   if (await Dealership.findOne({ owner: id }, {}, { lean: true }).exec()) {
     return next(new AppError("Dealership with this user already exists", 409));
+  }
+
+  if (user?.role === ADMIN) {
+    // This user has shadowed the higher scoped user and will represent the queried user
+    const user = await User.findById(id, {}, { lean: true }).exec();
+    if (!user) {
+      return next(new AppError("User with this ID those not exit", 404));
+    }
+
+    if (!user.isUserConfirmed) {
+      return next(new AppError("User is not confirmed", 401));
+    }
+
+    if (user.role === ADMIN) {
+      return next(new AppError("Admins cannot have a dealership", 403));
+    }
   }
 
   const payload = filterObject(
@@ -34,22 +47,6 @@ export const createDealership = catchAsync(async (req, res, next) => {
     },
   );
 
-  if (user?.role === ADMIN) {
-    // This user has shadowed the higher scoped user and will represent the queried user
-    const user = await User.findById(id, {}, { lean: true }).exec();
-    if (!user) {
-      return next(new AppError("User with this ID those not exit", 404));
-    }
-
-    if (!user.isUserConfirmed) {
-      return next(new AppError("User is not confirmed", 401));
-    }
-
-    if (user.role === ADMIN) {
-      return next(new AppError("Admins cannot have a dealership", 403));
-    }
-  }
-
   payload.owner = id;
   const dealership = await Dealership.create(payload);
 
@@ -63,7 +60,6 @@ export const getDealership = catchAsync(async (req, res, next) => {
   let dealership;
   const isAuthorized = req.user?.role === ADMIN || req.user?.role === DEALER;
 
-  console.log(isAuthorized, req.user?.role);
   if (isAuthorized) {
     dealership = await Dealership.findById(req.params.id, {}, { lean: true })
       .select("+cacCertificate +isApproved +dealershipLicence")
@@ -109,9 +105,7 @@ export const getAllDealerships = catchAsync(async (req, res, next) => {
       .paginate();
   }
 
-  const dealerships = await (isAdmin
-    ? appQueries.query
-    : appQueries.query.select("-cacCertificate -dealershipLicense"));
+  const dealerships = await appQueries.query;
 
   res.status(200).json({
     statusText: "success",

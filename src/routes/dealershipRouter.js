@@ -37,11 +37,7 @@ router.get(
 router
   .route("/")
   .get(dealershipController.getAllDealerships)
-  .post(
-    protect,
-    restrictTo(ADMIN, DEALER),
-    dealershipController.createDealership,
-  );
+  .post(protect, restrictTo(DEALER), dealershipController.createDealership);
 
 router
   .route("/:id")

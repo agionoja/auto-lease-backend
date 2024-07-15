@@ -40,10 +40,8 @@ const upload = multer({
 
 const uploadMultiple = async (req, res, next) => {
     try {
-        const images = req.files;
-        console.log(images);
+        const images = req.files.photos;
         const photos = [];
-        const photosId = [];
 
         for (const image of images) {
             const result = await new Promise((resolve, reject) => {
@@ -54,7 +52,7 @@ const uploadMultiple = async (req, res, next) => {
                         { width: 1000, crop: "scale" },
                         { quality: "auto" },
                         { fetch_format: "auto" }
-                      ],
+                    ],
                     use_filename: true
                 }, (error, result) => {
                     if (error) {

@@ -44,15 +44,7 @@ export const getAllCars = factory.getAll(service.getAllCars, (req) => {
   return { filter };
 });
 
-export const setCoverPhoto = catchAsync(async (req, res, next) => {
-  const result = req.user.photo
-    ? await cloudinaryImageUpdater(req.file.buffer, req.user.photo.id)
-    : await cloudinaryImageUploader(req.file.buffer)
-})
-
-export const createCar = factory.createOne(
-  service.createCar
-);
+export const createCar = factory.createOne(service.createCar);
 export const getCar = factory.getById(service.getCar);
 export const updateCar = factory.updateById(service.updateCar);
 export const deleteCar = factory.deleteById(service.deleteCar);

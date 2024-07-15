@@ -14,6 +14,7 @@ router
     protect,
     restrictTo(DEALER, ADMIN),
     carController.setDealershipId,
+    upload.fields(),
     carController.createCar,
   )
   .get(carController.getAllCars);

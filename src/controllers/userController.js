@@ -40,9 +40,8 @@ export const updateMyPassword = catchAsync(async (req, res) => {
 });
 
 export const updateMe = catchAsync(async (req, res) => {
-  console.log(req.file);
 
-  const result = await cloudinaryImageUploader(req.file.buffer)
+  const result = await cloudinaryImageUpdater(req.file.buffer,req.user.photo.id)
   
   req.body.photo = {
     url:result.secure_url,

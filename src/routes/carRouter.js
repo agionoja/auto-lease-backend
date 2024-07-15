@@ -14,12 +14,6 @@ router
     protect,
     restrictTo(DEALER, ADMIN),
     carController.setDealershipId,
-    upload.fields([
-      { name: "coverImage", maxCount: 1 },
-      { name: "photos", maxCount: 10 },
-    ]),
-    setCreateCoverImage,
-    uploadMultiple,
     carController.createCar,
   )
   .get(carController.getAllCars);
@@ -33,7 +27,7 @@ router
   .route("/")
   .post(
     protect,
-    upload.array("photos", 10),
+    upload.array("photos"),
     uploadMultiple,
     carController.createCarV1,
   )
@@ -41,6 +35,6 @@ router
 router
   .route("/:id")
   .get(carController.getCar)
-  .patch(upload.array("photos", 10), carController.updateCar);
+  .patch(upload.array("photos"), carController.updateCar);
 
 export default router;

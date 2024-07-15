@@ -35,49 +35,40 @@ const fileFilter = (req, file, cb) => {
 
 const upload = multer({
     storage,
-    limits: {fileSize: maxSize},
+    limits: { fileSize: maxSize },
 });
 
 const uploadMultiple = async (req, res, next) => {
-  try {
-    const images = req.files.photos;
+    try {
+        const images = req.files;
+        console.log(images);
+        const photos = [];
+        const photosId = [];
 
-    if (!images) {
-      return next(new AppError("No images to upload", 400));
-    }
+        for (const image of images) {
+            const result = await new Promise((resolve, reject) => {
+                const uploadStream = cloudinary.uploader.upload_stream({
+                    folder: "auto-lease",
+                    resource_type: "auto",
+                    transformation: [
+                        { width: 1000, crop: "scale" },
+                        { quality: "auto" },
+                        { fetch_format: "auto" }
+                      ],
+                    use_filename: true
+                }, (error, result) => {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        resolve(result);
+                    }
+                });
+                uploadStream.end(image.buffer);
+            });
 
-    const photos = [];
-
-    for (const image of images) {
-      const result = await new Promise((resolve, reject) => {
-        const uploadStream = cloudinary.uploader.upload_stream(
-          {
-            folder: "auto-lease",
-            resource_type: "auto",
-            transformation: [
-              { width: 1000, crop: "scale" },
-              { quality: "auto" },
-              { fetch_format: "auto" },
-            ],
-            use_filename: true,
-          },
-          (error, result) => {
-            if (error) {
-              reject(error);
-            } else {
-              resolve(result);
-            }
-          },
-        );
-        uploadStream.end(image.buffer);
-      });
-
-            photos.push(result.secure_url);
-            photosId.push(result.public_id);
+            photos.push({ url: result.secure_url, id: result.public_id })
         }
-
         req.body.photos = photos;
-        req.body.photosId = photosId;
         next();
     } catch (error) {
         console.log(error);
@@ -86,14 +77,13 @@ const uploadMultiple = async (req, res, next) => {
 };
 
 const cloudinaryImageUploader = async (buffer) => {
-    
     return new Promise((resolve, reject) => {
         const uploadStream = cloudinary.uploader.upload_stream({
             transformation: [
                 { width: 1000, crop: "scale" },
                 { quality: "auto" },
                 { fetch_format: "auto" }
-              ],
+            ],
             folder: "auto-lease"
         }, (error, result) => {
             if (error) {
@@ -120,7 +110,7 @@ const cloudinaryImageUpdater = async (buffer, previousImageId) => {
                     { width: 1000, crop: "scale" },
                     { quality: "auto" },
                     { fetch_format: "auto" }
-                  ],
+                ],
                 resource_type: "auto"
             }, (error, result) => {
                 if (error) {
@@ -139,4 +129,4 @@ const cloudinaryImageUpdater = async (buffer, previousImageId) => {
 // Transforms images
 // const cloudinaryImageRetriever = async (public_id,{transform})
 
-export {upload, cloudinary, cloudinaryImageUploader, cloudinaryImageUpdater, uploadMultiple};
+export { upload, cloudinary, cloudinaryImageUploader, cloudinaryImageUpdater, uploadMultiple };

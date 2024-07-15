@@ -34,13 +34,11 @@ const fileFilter = (req, file, cb) => {
 };
 
 const upload = multer({
-  storage,
-  limits: { fileSize: maxSize },
+    storage,
+    limits: {fileSize: maxSize},
 });
 
 const uploadMultiple = async (req, res, next) => {
-  console.log(req.files);
-
   try {
     const images = req.files.photos;
 
@@ -55,7 +53,7 @@ const uploadMultiple = async (req, res, next) => {
         const uploadStream = cloudinary.uploader.upload_stream(
           {
             folder: "auto-lease",
-            resource_type: "image",
+            resource_type: "auto",
             transformation: [
               { width: 1000, crop: "scale" },
               { quality: "auto" },
@@ -74,41 +72,38 @@ const uploadMultiple = async (req, res, next) => {
         uploadStream.end(image.buffer);
       });
 
-      photos.push({ uri: result.secure_url, id: result.public_id });
+            photos.push(result.secure_url);
+            photosId.push(result.public_id);
+        }
+
+        req.body.photos = photos;
+        req.body.photosId = photosId;
+        next();
+    } catch (error) {
+        console.log(error);
+        res.status(500).send('An error occurred while uploading files');
     }
-
-    req.body.photos = photos;
-
-    console.log(photos);
-    next();
-  } catch (error) {
-    console.log(error);
-
-    next(new AppError("An error occurred while uploading files", 500));
-  }
 };
 
 const cloudinaryImageUploader = async (buffer) => {
-  return new Promise((resolve, reject) => {
-    const uploadStream = cloudinary.uploader.upload_stream(
-      {
-        transformation: [
-          { width: 1000, crop: "scale" },
-          { quality: "auto" },
-          { fetch_format: "auto" },
-        ],
-        folder: "auto-lease",
-      },
-      (error, result) => {
-        if (error) {
-          reject(error);
-        } else {
-          resolve(result);
-        }
-      },
-    );
-    uploadStream.end(buffer);
-  });
+    
+    return new Promise((resolve, reject) => {
+        const uploadStream = cloudinary.uploader.upload_stream({
+            transformation: [
+                { width: 1000, crop: "scale" },
+                { quality: "auto" },
+                { fetch_format: "auto" }
+              ],
+            folder: "auto-lease"
+        }, (error, result) => {
+            if (error) {
+                reject(error);
+            } else {
+                resolve(result);
+            }
+        });
+        uploadStream.end(buffer);
+    });
 };
 
 const cloudinaryImageUpdater = async (buffer, previousImageId) => {
@@ -118,39 +113,30 @@ const cloudinaryImageUpdater = async (buffer, previousImageId) => {
       resource_type: "image",
     });
 
-    return new Promise((resolve, reject) => {
-      const uploadStream = cloudinary.uploader.upload_stream(
-        {
-          folder: "auto-lease",
-          transformation: [
-            { width: 1000, crop: "scale" },
-            { quality: "auto" },
-            { fetch_format: "auto" },
-          ],
-          resource_type: "auto",
-        },
-        (error, result) => {
-          if (error) {
-            reject(error);
-          } else {
-            resolve(result);
-          }
-        },
-      );
-      uploadStream.end(buffer);
-    });
-  } catch (error) {
-    throw error;
-  }
+        return new Promise((resolve, reject) => {
+            const uploadStream = cloudinary.uploader.upload_stream({
+                folder: "auto-lease",
+                transformation: [
+                    { width: 1000, crop: "scale" },
+                    { quality: "auto" },
+                    { fetch_format: "auto" }
+                  ],
+                resource_type: "auto"
+            }, (error, result) => {
+                if (error) {
+                    reject(error);
+                } else {
+                    resolve(result);
+                }
+            });
+            uploadStream.end(buffer);
+        });
+    } catch (error) {
+        throw error;
+    }
 };
 
 // Transforms images
 // const cloudinaryImageRetriever = async (public_id,{transform})
 
-export {
-  upload,
-  cloudinary,
-  cloudinaryImageUploader,
-  cloudinaryImageUpdater,
-  uploadMultiple,
-};
+export {upload, cloudinary, cloudinaryImageUploader, cloudinaryImageUpdater, uploadMultiple};

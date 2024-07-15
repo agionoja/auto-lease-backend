@@ -14,7 +14,12 @@ router
     protect,
     restrictTo(DEALER, ADMIN),
     carController.setDealershipId,
-    upload.fields(),
+    upload.fields([
+      { name: "coverImage", maxCount: 1 },
+      { name: "photos", maxCount: 10 },
+    ]),
+    setCreateCoverImage,
+    uploadMultiple,
     carController.createCar,
   )
   .get(carController.getAllCars);

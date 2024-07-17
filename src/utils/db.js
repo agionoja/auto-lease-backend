@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import chalk from "chalk";
 
-const connectDb = async ({ localDb = false, maxRetries = 3 } = {}) => {
+const connectDb = async ({ localDb = true, maxRetries = 3 } = {}) => {
   const localDbUrl = process.env.DATABASE_LOCAL_URL;
   const onlineDbUrl = process.env.DATABASE_URL.replace(
     /<password>/g,

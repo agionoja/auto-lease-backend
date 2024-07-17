@@ -28,22 +28,22 @@ const carSchema = new mongoose.Schema(
       minlength: [3, "A car name must be at least 3 characters long"],
       maxlength: [50, "Name cannot be more than 50 characters"],
     },
-    vin: {
-      type: String,
-      trim: true,
-      required: [true, "A Vehicle Identification Number is required"],
-      match: [/^[A-HJ-NPR-Z0-9]{17}$/, "Please enter a valid VIN"], // 17 characters for VIN
-    },
-    imei: {
-      type: String,
-      trim: true,
-      validate: {
-        validator: (v) => /^\d{15}$/.test(v),
-        message: (props) => `${props.value} is not a valid IMEI!`,
-      },
-      required: [true, "A IMEI is required"],
-      match: [/^\d{15}$/, "Please enter a valid IMEI"], // 15 digits for IMEI
-    },
+    // vin: {
+    //   type: String,
+    //   trim: true,
+    //   required: [true, "A Vehicle Identification Number is required"],
+    //   match: [/^[A-HJ-NPR-Z0-9]{17}$/, "Please enter a valid VIN"], // 17 characters for VIN
+    // },
+    // imei: {
+    //   type: String,
+    //   trim: true,
+    //   validate: {
+    //     validator: (v) => /^\d{15}$/.test(v),
+    //     message: (props) => `${props.value} is not a valid IMEI!`,
+    //   },
+    //   required: [true, "A IMEI is required"],
+    //   match: [/^\d{15}$/, "Please enter a valid IMEI"], // 15 digits for IMEI
+    // },
     plateNumber: {
       type: String,
       trim: true,
@@ -61,13 +61,13 @@ const carSchema = new mongoose.Schema(
         message: `Invalid category. Choose from: ${BASIC} and ${CLASSIC} and ${LUXURY}`,
       },
     },
-    description: {
-      type: String,
-      trim: true,
-      // required: [true, "Description is required"],
-      maxlength: [500, "Description cannot be more than 500 characters"],
-      minLength: [200, "Description cannot be less than 200 characters"],
-    },
+    // description: {
+    //   type: String,
+    //   trim: true,
+    //   // required: [true, "Description is required"],
+    //   maxlength: [500, "Description cannot be more than 500 characters"],
+    //   minLength: [200, "Description cannot be less than 200 characters"],
+    // },
     summary: {
       type: String,
       trim: true,
@@ -128,14 +128,14 @@ const carSchema = new mongoose.Schema(
         message: "Discount must be between 0% to 100%",
       },
     },
-    locations: {
-      type: [pointSchema],
-      required: [true, "A car must have at least  location"],
-      validate: [
-        limitArrayLength(5, 1),
-        "Location array must contain between 1 and 5 items",
-      ],
-    },
+    // locations: {
+    //   type: [pointSchema],
+    //   required: [false, "A car must have at least  location"],
+    //   validate: [
+    //     limitArrayLength(5, 1),
+    //     "Location array must contain between 1 and 5 items",
+    //   ],
+    // },
     isAvailable: {
       type: Boolean,
       default: true,

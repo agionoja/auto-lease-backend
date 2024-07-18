@@ -11,7 +11,7 @@ import app from "./src/app.js";
 import connectDb from "./src/utils/db.js";
 // process.env.PORT ||
 const startServer = async () => {
-  const port =  9000;
+  const port =  process.env.PORT || 9000;
   await connectDb({ localDb: true, maxRetries: 4 });
   const server = app.listen(port, () => {
     console.log(

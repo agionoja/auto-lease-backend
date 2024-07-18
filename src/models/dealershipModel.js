@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import slugify from "slugify";
 import pointSchema from "./pointSchema.js";
+import { photoSchema } from "./photoSchema.js";
 
 export const dealershipSchema = new mongoose.Schema(
   {
@@ -44,16 +45,23 @@ export const dealershipSchema = new mongoose.Schema(
       max: [100, "A dealership reputation cannot be more than 100%"],
       min: [0, "A dealership reputation cannot be less than 0%"],
     },
-    startLocation: {
-      type: pointSchema,
-      required: [true, "Start location is required"],
-      index: "2dsphere",
-    },
+    // startLocation: {
+    //   type: pointSchema,
+    //   required: [true, "Start location is required"],
+    //   index: "2dsphere",
+    // },
     coverImage: {
-      type: String,
+      type: photoSchema,
       required: ["A Dealership must have a cover image"],
     },
-    photos: [String],
+ photos: {
+      type: [photoSchema],
+      required: [true, "A car must have at least a photo"],
+      validate: [
+        limitArrayLength(10, 1),
+        "Photos array must contain between 1 and 10 items",
+      ],
+    },
     owner: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",

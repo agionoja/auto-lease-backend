@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import slugify from "slugify";
-import pointSchema from "./pointSchema.js";
+import { limitArrayLength } from "../utils/helpers.js";
 import { photoSchema } from "./photoSchema.js";
 
 export const dealershipSchema = new mongoose.Schema(

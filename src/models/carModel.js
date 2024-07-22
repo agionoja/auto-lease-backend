@@ -3,7 +3,7 @@ import slugify from "slugify";
 import { limitArrayLength } from "../utils/helpers.js";
 import pointSchema from "./pointSchema.js";
 import { CATEGORY } from "../utils/constants.js";
-import { photoSchema } from "./photoSchema.js";
+import { fileSchema } from "./fileSchema.js";
 
 const { BASIC, CLASSIC, LUXURY } = CATEGORY;
 const carSchema = new mongoose.Schema(
@@ -92,11 +92,11 @@ const carSchema = new mongoose.Schema(
       required: [true, "A car must have a lease duration"],
     },
     coverImage: {
-      type: photoSchema,
+      type: fileSchema,
       required: true,
     },
     photos: {
-      type: [photoSchema],
+      type: [fileSchema],
       required: [true, "A car must have at least a photo"],
       validate: [
         limitArrayLength(10, 1),

@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import slugify from "slugify";
-import { limitArrayLength } from "../utils/helpers.js";
+import pointSchema from "./pointSchema.js";
 import { photoSchema } from "./photoSchema.js";
 
 export const dealershipSchema = new mongoose.Schema(
@@ -13,12 +13,12 @@ export const dealershipSchema = new mongoose.Schema(
       maxlength: [50, "Name cannot be more than 50 characters"],
     },
     cacCertificate: {
-      type: String,
+      type: [fileSchema],
       select: false,
       required: [true, "A dealership must have a valid CAC certificate"],
     },
     dealershipLicence: {
-      type: String,
+      type: [fileSchema],
       select: false,
       required: [
         true,
@@ -51,11 +51,11 @@ export const dealershipSchema = new mongoose.Schema(
     //   index: "2dsphere",
     // },
     coverImage: {
-      type: photoSchema,
+      type: fileSchema,
       required: ["A Dealership must have a cover image"],
     },
- photos: {
-      type: [photoSchema],
+    photos: {
+      type: [fileSchema],
       required: [true, "A car must have at least a photo"],
       validate: [
         limitArrayLength(10, 1),

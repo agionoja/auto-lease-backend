@@ -3,7 +3,7 @@ import * as carController from "../controllers/carController.js";
 import { protect, restrictTo } from "../middlewares/guard.js";
 import { ROLES } from "../utils/constants.js";
 import { upload, uploadMultiple } from "../utils/imageUploader.js";
-import { ensureValidObject, setCreateCoverImage } from "../middlewares/x.js";
+import { ensureValidObject, uploadCoverImage } from "../middlewares/x.js";
 
 const router = express.Router({ mergeParams: true });
 const { DEALER, ADMIN } = ROLES;
@@ -18,7 +18,7 @@ router
       { name: "coverImage", maxCount: 1 },
       { name: "photos", maxCount: 10 },
     ]),
-    setCreateCoverImage,
+    uploadCoverImage,
     uploadMultiple,
     carController.createCar,
   )

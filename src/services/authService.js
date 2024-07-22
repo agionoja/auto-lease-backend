@@ -58,6 +58,7 @@ export const requestVerification = async (req) => {
     user,
   ).verificationSender();
 
+  console.log();
   return {
     message,
   };
@@ -122,6 +123,7 @@ export const signIn = async (password, email) => {
   // }
 
   const otp = generateOtp(6);
+  console.log({ otp });
   user.otp = createHash(otp);
   user.otpExpires = createTimeStampInEpoch({ m: 2 });
   await user.save({ validateBeforeSave: false });

@@ -1,5 +1,5 @@
 process.on("uncaughtException", (err) => {
-  console.log(err.name, err.message);
+  console.log(err.name, err.message, err);
   console.log(chalk.red("UNCAUGHT EXCEPTION 🧨 Shutting down"));
   process.exit(1);
 });
@@ -16,18 +16,18 @@ const startServer = async () => {
   const server = app.listen(port, () => {
     console.log(
       chalk.greenBright(
-        `Server is listening for requests on ${chalk.blueBright.underline(`http://127.0.0.1:${port}`)}`,
+        `Server is listening to requests on ${chalk.blueBright.underline(`http://127.0.0.1:${port}`)}`,
       ),
     );
   });
 
-  process.on("unhandledRejection", (err) => {
-    console.log(err.name, err.message);
-    console.log(chalk.red(`UNHANDLED REJECTION 🧨 Shutting down`));
-    server.close(() => {
-      process.exit(1);
-    });
-  });
+  // process.on("unhandledRejection", (err) => {
+  //   console.log(err.name, err.message);
+  //   console.log(chalk.red(`UNHANDLED REJECTION 🧨 Shutting down`));
+  //   server.close(() => {
+  //     process.exit(1);
+  //   });
+  // });
 };
 
 (async () => await startServer())();

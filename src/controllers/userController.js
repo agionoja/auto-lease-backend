@@ -43,7 +43,6 @@ export const updateMyPassword = catchAsync(async (req, res) => {
 });
 
 export const updateMe = catchAsync(async (req, res) => {
-
   const result = req.user.photo
     ? await cloudinaryImageUpdater(req.file.buffer, req.user.photo.id)
     : await cloudinaryImageUploader(req.file.buffer);
@@ -55,7 +54,7 @@ export const updateMe = catchAsync(async (req, res) => {
 
   const { user } = await service.updateMe(req.body, req.user.id);
 
-  console.log(req.body);
+  // console.log(req.body);
 
   res.status(200).json({
     statusText: "success",
@@ -73,6 +72,7 @@ export const deleteMe = catchAsync(async (req, res) => {
 });
 
 export const applyForDealership = catchAsync(async (req, res) => {
+  console.log({ reqBody: req.body });
   const { message } = await service.applyForDealership(req.body, req.user);
 
   res.status(200).json({

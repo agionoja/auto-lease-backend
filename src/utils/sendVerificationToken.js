@@ -15,6 +15,8 @@ export default class SendVerificationToken {
   async init() {
     this.token = await generateAndSaveVerificationToken(this.user);
     this.url = `${BASE_URL}/auth/verify/${this.token}`;
+
+    // console.log(this.token);
     this.successMsg =
       "verification email sent! Please check your inbox to verify your account.";
     this.failMsg =

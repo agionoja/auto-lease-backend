@@ -12,7 +12,6 @@ const { ADMIN, DEALER, USER } = ROLES;
 export const createDealership = async (reqBody, userId, options = {}) => {
   const { createdByAdmin } = options;
   let user;
-
   if (createdByAdmin) {
     user = await User.findById(userId).exec();
 
@@ -56,7 +55,6 @@ export const createDealership = async (reqBody, userId, options = {}) => {
 
   payload.owner = userId;
   payload.isApproved = createdByAdmin || false;
-
   const dealership = await Dealership.create(payload);
 
   if (createdByAdmin) {
